@@ -48,8 +48,9 @@ Bun.serve({
     }
     if (url.pathname === "/add") {
       console.log("addingnngng");
-      const code = url.searchParams.get("code");
-      const juicetoken = url.searchParams.get("juice");
+      const code = url.searchParams.get("code") || "";
+      const juicetoken = url.searchParams.get("juice") || "";
+      console.log("code =" + code + "juice is" + juicetoken);
       try {
         axios
           .post("https://slack.com/api/oauth.v2.access", {
@@ -58,6 +59,7 @@ Bun.serve({
             client_secret: CLIENT_SECRET,
           })
           .then((response) => {
+            console.log("accesstoken is : " + response.data);
             addToken(response.data.access_token, juicetoken);
           });
       } catch (error) {
