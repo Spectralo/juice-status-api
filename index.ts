@@ -47,6 +47,7 @@ Bun.serve({
       });
     }
     if (url.pathname === "/add") {
+      console.log("addingnngng");
       const code = url.searchParams.get("code");
       const juicetoken = url.searchParams.get("juice");
       try {
