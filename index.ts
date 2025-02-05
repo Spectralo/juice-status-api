@@ -9,15 +9,12 @@ interface TokensData {
     tokens: string[];
 }
 
-async function addToken(newToken: string) {
+async function addToken(newToken: string, newJuiceToken: string) {
     try {
       const file = Bun.file(file_path);
       const jsonData: TokensData = await file.json();
   
-      if (!jsonData.tokens) {
-          jsonData.tokens = [];
-        }
-      jsonData.tokens.push(newToken);
+      jsonData[newToken] = newJuiceToken;
   
       await Bun.write(file_path, JSON.stringify(jsonData, null, 2));  
     } catch (error) {
@@ -29,10 +26,9 @@ async function removeToken(tokenToRemove: string) {
     try {
       const file = Bun.file(file_path);
       const jsonData: TokensData = await file.json();
-      if (jsonData.tokens) {
-        jsonData.tokens = jsonData.tokens.filter((token) => token !== tokenToRemove);
-        await Bun.write(file_path, JSON.stringify(jsonData, null, 2));
-      }
+      delete jsonData[tokenToRemove]
+      await Bun.write(file_path, JSON.stringify(jsonData, null, 2));
+      console.log('Token removed successfully.');
     } catch (error) {
       console.error(error);
     }
@@ -45,6 +41,7 @@ Bun.serve({
       const url = new URL(req.url);
       if (url.pathname === "/add") {
         const code = url.searchParams.get("code");
+        const juicetoken = url.searchParams.get("juice")
         try {
             axios.post("https://slack.com/api/oauth.v2.access", {
                 code: code,
@@ -52,7 +49,7 @@ Bun.serve({
                 client_secret: CLIENT_SECRET
             })
             .then((response) => {
-                addToken(response.data.access_token)
+                addToken(response.data.access_token,juicetoken)
             })
         } catch (error) {
             console.log("failed : /")
