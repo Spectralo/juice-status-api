@@ -78,9 +78,6 @@ Bun.serve({
             "Removed 1 user with token : " + data.authed_user.access_token,
           );
           removeToken(data.authed_user.access_token);
-        })
-        .catch((error) => {
-          console.error("Error removing token:", error);
         });
     }
     return new Response("JuiceStats!");
