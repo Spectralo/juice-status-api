@@ -49,6 +49,9 @@ Bun.serve({
           client_id: CLIENT_ID,
           client_secret: CLIENT_SECRET,
         }),
+        headers: {
+          "Content-Type": "application/json",
+        },
       })
         .then((response) => response.json())
         .then((data) => {
