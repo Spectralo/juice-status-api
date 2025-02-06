@@ -5,7 +5,7 @@ const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const file_path = "tokens.json";
 const PORT = process.env.PORT;
 
-async function addToken(newToken: string, newJuiceToken: string) {
+async function addToken(newToken: string, newJuiceToken:any) {
   try {
     const file = Bun.file(file_path);
     const jsonData = await file.json();
@@ -34,34 +34,19 @@ Bun.serve({
   port: PORT,
   fetch(req) {
     const url = new URL(req.url);
-
-    // Handle OPTIONS preflight request
-    if (req.method === "OPTIONS") {
-      return new Response(null, {
-        status: 204,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type, Authorization",
-        },
-      });
-    }
+    console.log("URL is : "+url.toString())
+    
     if (url.pathname === "/add") {
-      console.log("addingnngng");
-      const code = url.searchParams.get("code") || "";
-      const juicetoken = url.searchParams.get("juice") || "";
-      console.log("code =" + code + "juice is" + juicetoken);
+      const code = url.searchParams.get("code");
+      const juicetoken = url.searchParams.get("juice")
       try {
-        axios
-          .post("https://slack.com/api/oauth.v2.access", {
+        axios.post("https://slack.com/api/oauth.v2.access", {
             code: code,
             client_id: CLIENT_ID,
             client_secret: CLIENT_SECRET,
-          })
-          .then((response) => {
-            console.log("accesstoken is : " + response.data);
+        }).then((response) => {
             addToken(response.data.access_token, juicetoken);
-          });
+        });
       } catch (error) {
         console.log("failed : /");
       }
