@@ -42,17 +42,20 @@ Bun.serve({
     if (url.pathname === "/add") {
       const code = url.searchParams.get("code");
       const juicetoken = url.searchParams.get("juice");
-      fetch("https://slack.com/api/oauth.v2.access", {
-        method: "POST",
-        body: JSON.stringify({
-          code: code,
-          client_id: CLIENT_ID,
-          client_secret: CLIENT_SECRET,
-        }),
-        headers: {
-          "Content-Type": "application/json",
+      fetch(
+        "https://slack.com/api/oauth.v2.access?code=" +
+          code +
+          "&client_id=" +
+          CLIENT_ID +
+          "&client_secret=" +
+          CLIENT_SECRET,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
         },
-      })
+      )
         .then((response) => response.json())
         .then((data) => {
           console.log(data);
