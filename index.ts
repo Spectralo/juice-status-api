@@ -1,5 +1,5 @@
-import axios from "axios";
 import { fetch } from "bun";
+require("better-logging")(console);
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
@@ -25,7 +25,6 @@ async function removeToken(tokenToRemove: any) {
     const jsonData = await file.json();
     delete jsonData[tokenToRemove];
     await Bun.write(file_path, JSON.stringify(jsonData, null, 2));
-    console.log("Token removed successfully.");
   } catch (error) {
     console.error(error);
   }
@@ -35,9 +34,6 @@ Bun.serve({
   port: PORT,
   fetch(req) {
     const url = new URL(req.url);
-    console.log("URL is : " + url.toString());
-    console.log("Juice Token is : " + url.searchParams.get("juice"));
-    console.log("Code is : " + url.searchParams.get("code"));
 
     if (url.pathname === "/add") {
       const code = url.searchParams.get("code");
@@ -60,8 +56,10 @@ Bun.serve({
         .then((response) => response.json())
         .then((data) => {
           console.log(data);
-          console.log("Adding token:", data.access_token + " " + juicetoken);
-          addToken(data.access_token, juicetoken);
+          console.info(
+            "Added 1 user with token : " + data.authed_user.access_token,
+          );
+          addToken(data.authed_user.access_token, juicetoken);
         })
         .catch((error) => {
           console.error("Error adding token:", error);
