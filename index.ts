@@ -66,12 +66,21 @@ Bun.serve({
     }
     if (url.pathname === "/remove") {
       const code = url.searchParams.get("code");
-      fetch("https://slack.com/api/oauth.v2.access?code=" + code, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+      fetch(
+        "https://slack.com/api/oauth.v2.access?code=" +
+          code +
+          "&client_id=" +
+          CLIENT_ID +
+          "&client_secret=" +
+          CLIENT_SECRET +
+          "&redirect_uri=https://juicestats.spectralo.hackclub.app/remove",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
         },
-      })
+      )
         .then((response) => response.json())
         .then((data) => {
           console.info(
