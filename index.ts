@@ -52,6 +52,7 @@ Bun.serve({
       })
         .then((response) => response.json())
         .then((data) => {
+          console.log(data);
           console.log("Adding token:", data.access_token + " " + juicetoken);
           addToken(data.access_token, juicetoken);
         })
