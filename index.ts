@@ -55,7 +55,6 @@ Bun.serve({
       )
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);
           console.info(
             "Added 1 user with token : " + data.authed_user.access_token,
           );
