@@ -86,7 +86,6 @@ Bun.serve({
           console.info(
             "Removed 1 user with token : " + data.authed_user.access_token,
           );
-          console.info(data);
           removeToken(data.authed_user.access_token);
         });
     }
