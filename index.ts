@@ -5,7 +5,7 @@ const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const file_path = "tokens.json";
 const PORT = process.env.PORT;
 
-async function addToken(newToken: string, newJuiceToken: any) {
+async function addToken(newToken, newJuiceToken) {
   try {
     const file = Bun.file(file_path);
     const jsonData = await file.json();
@@ -18,7 +18,7 @@ async function addToken(newToken: string, newJuiceToken: any) {
   }
 }
 
-async function removeToken(tokenToRemove: string) {
+async function removeToken(tokenToRemove) {
   try {
     const file = Bun.file(file_path);
     const jsonData = await file.json();
@@ -41,35 +41,33 @@ Bun.serve({
     if (url.pathname === "/add") {
       const code = url.searchParams.get("code");
       const juicetoken = url.searchParams.get("juice");
-      try {
-        axios
-          .post("https://slack.com/api/oauth.v2.access", {
-            code: code,
-            client_id: CLIENT_ID,
-            client_secret: CLIENT_SECRET,
-          })
-          .then((response) => {
-            addToken(response.data.access_token, juicetoken);
-          });
-      } catch (error) {
-        console.log("failed : /");
-      }
+      axios
+        .post("https://slack.com/api/oauth.v2.access", {
+          code: code,
+          client_id: CLIENT_ID,
+          client_secret: CLIENT_SECRET,
+        })
+        .then((response) => {
+          addToken(response.data.access_token, juicetoken);
+        })
+        .catch((error) => {
+          console.error("Error adding token:", error);
+        });
     }
     if (url.pathname === "/remove") {
       const code = url.searchParams.get("code");
-      try {
-        axios
-          .post("https://slack.com/api/oauth.v2.access", {
-            code: code,
-            client_id: CLIENT_ID,
-            client_secret: CLIENT_SECRET,
-          })
-          .then((response) => {
-            removeToken(response.data.access_token);
-          });
-      } catch (error) {
-        console.log("failed : /");
-      }
+      axios
+        .post("https://slack.com/api/oauth.v2.access", {
+          code: code,
+          client_id: CLIENT_ID,
+          client_secret: CLIENT_SECRET,
+        })
+        .then((response) => {
+          removeToken(response.data.access_token);
+        })
+        .catch((error) => {
+          console.error("Error removing token:", error);
+        });
     }
     return new Response("JuiceStats!");
   },
