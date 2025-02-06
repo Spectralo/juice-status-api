@@ -48,7 +48,8 @@ Bun.serve({
           "&client_id=" +
           CLIENT_ID +
           "&client_secret=" +
-          CLIENT_SECRET,
+          CLIENT_SECRET +
+          "&redirect_uri=https://juicestats.spectralo.hackclub.app/add",
         {
           method: "POST",
           headers: {
