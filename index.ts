@@ -66,14 +66,18 @@ Bun.serve({
     }
     if (url.pathname === "/remove") {
       const code = url.searchParams.get("code");
-      axios
-        .post("https://slack.com/api/oauth.v2.access", {
-          code: code,
-          client_id: CLIENT_ID,
-          client_secret: CLIENT_SECRET,
-        })
-        .then((response) => {
-          removeToken(response.data.access_token);
+      fetch("https://slack.com/api/oauth.v2.access?code=" + code, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.info(
+            "Removed 1 user with token : " + data.authed_user.access_token,
+          );
+          removeToken(data.authed_user.access_token);
         })
         .catch((error) => {
           console.error("Error removing token:", error);
