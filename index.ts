@@ -1,11 +1,12 @@
 import axios from "axios";
+import { fetch } from "bun";
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const file_path = "tokens.json";
 const PORT = process.env.PORT;
 
-async function addToken(newToken, newJuiceToken) {
+async function addToken(newToken: any, newJuiceToken: any) {
   try {
     const file = Bun.file(file_path);
     const jsonData = await file.json();
@@ -18,7 +19,7 @@ async function addToken(newToken, newJuiceToken) {
   }
 }
 
-async function removeToken(tokenToRemove) {
+async function removeToken(tokenToRemove: any) {
   try {
     const file = Bun.file(file_path);
     const jsonData = await file.json();
@@ -41,14 +42,18 @@ Bun.serve({
     if (url.pathname === "/add") {
       const code = url.searchParams.get("code");
       const juicetoken = url.searchParams.get("juice");
-      axios
-        .post("https://slack.com/api/oauth.v2.access", {
+      fetch("https://slack.com/api/oauth.v2.access", {
+        method: "POST",
+        body: JSON.stringify({
           code: code,
           client_id: CLIENT_ID,
           client_secret: CLIENT_SECRET,
-        })
-        .then((response) => {
-          addToken(response.data.access_token, juicetoken);
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Adding token:", data.access_token + " " + juicetoken);
+          addToken(data.access_token, juicetoken);
         })
         .catch((error) => {
           console.error("Error adding token:", error);
